@@ -88,6 +88,12 @@ public class DefaultGlobalTransaction implements GlobalTransaction {
         begin(timeout, DEFAULT_GLOBAL_TX_NAME);
     }
 
+    /**
+     * 调用transactionManager.begin()方法通过TmRpcClient与server通信并生成一个xid
+     * 将xid绑定到Root上下文中
+     *
+     * 全局事务开启时，是由TM来发起的
+     */
     @Override
     public void begin(int timeout, String name) throws TransactionException {
         if (role != GlobalTransactionRole.Launcher) {

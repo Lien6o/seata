@@ -52,6 +52,9 @@ import static io.seata.core.constants.DefaultValues.DEFAULT_DISABLE_GLOBAL_TRANS
 
 /**
  * The type Global transaction scanner.
+ * 实现的类主要是为了获取spring的上下文 ApplicationContext 和在实例化完成时进行 TM 、RM的初始化，
+ * 并注册销毁时调用的钩子，比较简单。
+ * 这里有一个可以优化的地方，就是当项目中没有扫描到存在@GlobalTransactional注解的方法时，可以不用进行TM的初始化。
  *
  * @author slievrly
  */
@@ -157,6 +160,9 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
         ShutdownHook.getInstance().destroyAll();
     }
 
+    /**
+     * 初始化 TM 和 RM
+     */
     private void initClient() {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Initializing Global Transaction Clients ... ");
@@ -191,6 +197,9 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
         ShutdownHook.getInstance().addDisposable(RmRpcClient.getInstance(applicationId, txServiceGroup));
     }
 
+    /**
+     * 重写 代理时
+     */
     @Override
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
         if (disableGlobalTransaction) {
@@ -216,6 +225,7 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
                     }
 
                     if (interceptor == null) {
+                        // 拦截器
                         interceptor = new GlobalTransactionalInterceptor(failureHandlerHook);
                         ConfigurationFactory.getInstance().addConfigListener(ConfigurationKeys.DISABLE_GLOBAL_TRANSACTION, (ConfigurationChangeListener) interceptor);
                     }

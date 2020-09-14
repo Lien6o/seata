@@ -23,9 +23,17 @@ import io.seata.config.ConfigurationFactory;
 
 /**
  * The interface Registry service.
- *
+ * 首先来讲讲比较基础的 Discover 模块，又称服务注册/发现模块。我们将 Seata-Server 启动之后，需要将自己的地址暴露给其他使用者，那么就需要这个模块帮忙。
  * @param <T> the type parameter
  * @author slievrly
+ *
+ * 这个模块有个核心接口 RegistryService，
+ * • register：服务端使用，进行服务注册。
+ * • unregister：服务端使用，一般在 JVM 关闭钩子，ShutdownHook 中调用。
+ * • subscribe：客户端使用，注册监听事件，用来监听地址的变化。
+ * • unsubscribe：客户端使用，取消注册监听事件。
+ * • lookup：客户端使用，根据 Key 查找服务地址列表。
+ * • close：都可以使用，用于关闭 Register 资源。
  */
 public interface RegistryService<T> {
 

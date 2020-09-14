@@ -79,6 +79,7 @@ public class GlobalTransactionalInterceptor implements ConfigurationChangeListen
 
         final GlobalTransactional globalTransactionalAnnotation = getAnnotation(method, GlobalTransactional.class);
         final GlobalLock globalLockAnnotation = getAnnotation(method, GlobalLock.class);
+        // 把注解的值get set一遍
         if (!disable && globalTransactionalAnnotation != null) {
             return handleGlobalTransaction(methodInvocation, globalTransactionalAnnotation);
         } else if (!disable && globalLockAnnotation != null) {

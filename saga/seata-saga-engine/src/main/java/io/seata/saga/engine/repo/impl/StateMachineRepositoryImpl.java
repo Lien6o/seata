@@ -43,8 +43,8 @@ import org.springframework.core.io.Resource;
 public class StateMachineRepositoryImpl implements StateMachineRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StateMachineRepositoryImpl.class);
-    private Map<String/** Name_Tenant **/, Item> stateMachineMapByNameAndTenant = new ConcurrentHashMap<>();
-    private Map<String/** Id **/, Item> stateMachineMapById = new ConcurrentHashMap<>();
+    private Map<String/* Name_Tenant */, Item> stateMachineMapByNameAndTenant = new ConcurrentHashMap<>();
+    private Map<String/* Id */, Item> stateMachineMapById = new ConcurrentHashMap<>();
     private StateLangStore stateLangStore;
     private SeqGenerator seqGenerator = new SpringJvmUUIDSeqGenerator();
     private String charset = "UTF-8";

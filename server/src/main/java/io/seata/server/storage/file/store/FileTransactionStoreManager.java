@@ -52,7 +52,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The type File transaction store manager.
+ * 存储层的实现对于 Seata 是否高性能，是否可靠非常关键。
+ * 如果存储层没有实现好，那么如果发生宕机，在 TC 中正在进行分布式事务处理的数据将会被丢失。
  *
+ * 既然使用了分布式事务，那么其肯定不能容忍丢失。
+ * 如果存储层实现好了，但是其性能有很大问题，RM 可能会发生频繁回滚那么其完全无法应对高并发的场景。
+ *
+ * 在 Seata 中默认提供了文件方式的存储，下面定义存储的数据为 Session，而 TM 创造的全局事务数据叫 GlobalSession，
+ *
+ * RM 创造的分支事务叫 BranchSession，一个 GlobalSession 可以拥有多个 BranchSession。我们的目的就是要将这么多 Session 存储下来。
  * @author slievrly
  */
 public class FileTransactionStoreManager extends AbstractTransactionStoreManager
@@ -459,6 +467,9 @@ public class FileTransactionStoreManager extends AbstractTransactionStoreManager
     }
 
     private boolean writeDataFileByBuffer(ByteBuffer byteBuffer) {
+        // 最后将 ByteBuffer 写入 fileChannel，这里会重试5次。
+        // 此时的数据还在 pageCache 层，受两方面的影响，OS 有自己的刷新策略，但是这个业务程序不能控制，
+        // 为了防止宕机等事件出现造成大量数据丢失，所以就需要业务自己控制 flush。
         for (int retry = 0; retry < MAX_WRITE_RETRY; retry++) {
             try {
                 while (byteBuffer.hasRemaining()) {

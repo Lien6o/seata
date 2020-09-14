@@ -34,6 +34,11 @@ public class ExecuteTemplate {
 
     /**
      * Execute t.
+     * AT 模式下，真正分支事务开始是在 StatementProxy 和 PreparedStatementProxy的 execute、executeQuery、executeUpdate 等具体执行方法中，
+     *
+     * 这些方法均实现自 Statement 和 PreparedStatement 的标准接口，
+     *
+     * 而方法体内调用了 ExecuteTemplate.execute 做方法拦截，下面我们来看看这个方法的实现：
      *
      * @param <T>               the type parameter
      * @param <S>               the type parameter

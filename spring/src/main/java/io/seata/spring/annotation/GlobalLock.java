@@ -26,6 +26,9 @@ import java.lang.annotation.Target;
  * but the transaction need to ensure records to update(or select for update) is not in global transaction middle
  * stage<br/>
  *
+ * 声明事务仅执行在本地RM中，但是本次事务确保在更新状态下的操作记录不会被其他全局事务操作。
+ * 即将本地事务的执行纳入seata分布式事务的管理，一起竞争全局锁，保证全局事务在执行的时候，本地业务不可以操作全局事务中的记录。
+ *
  * use this annotation instead of GlobalTransaction in the situation mentioned above will help performance.
  */
 @Retention(RetentionPolicy.RUNTIME)

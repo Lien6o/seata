@@ -35,11 +35,35 @@ import io.seata.server.session.BranchSession;
  * @author zhangsen
  */
 public class FileLocker extends AbstractLocker {
-
+    /**
+     * BUCKET_PER_TABLE：用来定义每个 table 有多少个 bucket，目的是为了后续对同一个表加锁的时候减少竞争。
+     */
     private static final int BUCKET_PER_TABLE = 128;
-
-    private static final ConcurrentMap<String/* resourceId */, ConcurrentMap<String/* tableName */,
-        ConcurrentMap<Integer/* bucketId */, BucketLockMap>>>
+    /**
+     * <pre>
+     * resourceId tableName
+     *            tableName bucketId
+     *                      bucketId PK
+     *                               PK transactionId
+     *
+     * LOCK_MAP：这个 Map 从定义上来看非常复杂，里里外外套了很多层 Map，这里用个表格具体说明一下：
+     *
+     * || 层数	              || key	                                         || value
+     * -----------------------------------------------------------------------------------------
+     * || 1- LOCK_MAP	      || resourceId（jdbcUrl）	                         || dbLockMap
+     * || 2- dbLockMap	      || tableName （表名）	                             || tableLockMap
+     * || 3- tableLockMap	  || PK.hashcode%Bucket （主键值的 hashcode%bucket）	 || bucketLockMap
+     * || 4- bucketLockMap	  || PK	                                             || transactionId
+     *
+     *
+     * 可以看见实际上的加锁在 bucketLockMap 这个 Map 中，这里具体的加锁方法比较简单就不作详细阐述，主要是逐步的找到 bucketLockMap ，
+     * 然后将当前 transactionId 塞进去，如果这个主键当前有 TransactionId，那么比较是否是自己，如果不是则加锁失败。
+     *
+     * </pre>
+     */
+    private static final ConcurrentMap<String/* resourceId */
+            , ConcurrentMap<String/* tableName */,
+                    ConcurrentMap<Integer/* bucketId */, BucketLockMap>>>
         LOCK_MAP = new ConcurrentHashMap<>();
 
     /**

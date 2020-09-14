@@ -196,6 +196,7 @@ public class DefaultSagaTransactionalTemplate
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        // 初始化 启动
         initSeataClient();
     }
 

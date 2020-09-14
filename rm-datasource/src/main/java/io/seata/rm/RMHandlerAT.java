@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The type Rm handler at.
- *
+ *，提到了Seata会使用SPI拓展机制找到RmClient的回调处理器RMHandlerAT，该类是负责接送二阶段seata-server发给RmClient的提交、回滚消息，并作出提交，回滚操作
  * @author sharajava
  */
 public class RMHandlerAT extends AbstractRMHandler {

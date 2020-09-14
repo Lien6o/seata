@@ -25,6 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 注解在业务方法上用来开启全局事务，可以自定义超时时间、全局事务的名字、回滚时调用的类等。
  * The interface Global transactional.
  */
 @Retention(RetentionPolicy.RUNTIME)

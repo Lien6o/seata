@@ -65,6 +65,17 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
         super(statementProxy, statementCallback, sqlRecognizers);
     }
 
+    /**
+     * 终于进入正题，doExecute 方法位于 AbstractDMLBaseExecutor 类中，该类继承自上文中的 BaseTransactionalExecutor。
+     *
+     * doExecute 方法体内先拿到具体的连接代理对象 connectionProxy，
+     * 然后根据 Commit 标识进行不同方法的调用，但翻看代码实现时发现，
+     * 其实 executeCommitTrue方法就是先把 Commit 标识改成 false 然后再调用 executeCommitFalse 方法。
+     *
+     * @param args the args
+     * @return
+     * @throws Throwable
+     */
     @Override
     public T doExecute(Object... args) throws Throwable {
         AbstractConnectionProxy connectionProxy = statementProxy.getConnectionProxy();
@@ -100,6 +111,7 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
     protected T executeAutoCommitTrue(Object[] args) throws Throwable {
         ConnectionProxy connectionProxy = statementProxy.getConnectionProxy();
         try {
+            // 自动提交改为 false
             connectionProxy.setAutoCommit(false);
             return new LockRetryPolicy(connectionProxy).execute(() -> {
                 T result = executeAutoCommitFalse(args);
@@ -129,7 +141,7 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
 
     /**
      * After image table records.
-     *
+     * 在图像表记录之后
      * @param beforeImage the before image
      * @return the table records
      * @throws SQLException the sql exception
@@ -145,6 +157,7 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
 
         @Override
         public <T> T execute(Callable<T> callable) throws Exception {
+            // 冲突时锁定重试策略分支回滚
             if (LOCK_RETRY_POLICY_BRANCH_ROLLBACK_ON_CONFLICT) {
                 return doRetryOnLockConflict(callable);
             } else {

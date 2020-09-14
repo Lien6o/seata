@@ -40,6 +40,9 @@ public abstract class AbstractLockManager implements LockManager {
      */
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractLockManager.class);
 
+    public AbstractLockManager() {
+    }
+
     @Override
     public boolean acquireLock(BranchSession branchSession) throws TransactionException {
         if (branchSession == null) {

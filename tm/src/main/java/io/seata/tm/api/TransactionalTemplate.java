@@ -54,9 +54,11 @@ public class TransactionalTemplate {
             throw new ShouldNeverHappenException("transactionInfo does not exist");
         }
         // 1.1 get or create a transaction
+        // 创建全局事务管理器
         GlobalTransaction tx = GlobalTransactionContext.getCurrentOrCreate();
 
         // 1.2 Handle the Transaction propatation and the branchType
+        // 传播机制的处理
         Propagation propagation = txInfo.getPropagation();
         SuspendedResourcesHolder suspendedResourcesHolder = null;
         try {
