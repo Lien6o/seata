@@ -31,7 +31,9 @@ import io.seata.saga.statelang.domain.impl.AbstractTaskState.RetryImpl;
  * @author lorne.cl
  */
 public abstract class AbstractTaskStateParser extends BaseStatePaser {
-
+    /**
+     * 构建 state
+     */
     protected void parseTaskAttributes(AbstractTaskState state, Object node) {
 
         parseBaseAttributes(state, node);

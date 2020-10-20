@@ -245,7 +245,7 @@ public class ServiceTaskHandlerInterceptor implements StateHandlerInterceptor {
                 throw exception;
             }
         }
-
+        // 在上下文参数 设置 参数
         ((HierarchicalProcessContext)context).setVariableLocally(DomainConstants.VAR_NAME_INPUT_PARAMS,
             serviceInputParams);
 

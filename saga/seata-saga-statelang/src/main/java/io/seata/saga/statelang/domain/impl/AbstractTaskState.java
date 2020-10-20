@@ -33,7 +33,13 @@ public abstract class AbstractTaskState extends BaseState implements TaskState {
     private boolean isForUpdate;
     private List<Retry> retry;
     private List<ExceptionMatch> catches;
+    /**
+     * 入参
+     */
     private List<Object> input;
+    /**
+     * 返回值
+     */
     private Map<String, Object> output;
     private Map<String, String> status;//Map<String/* expression */, String /* status */>
     private boolean isPersist = true;

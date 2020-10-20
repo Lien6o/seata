@@ -95,6 +95,7 @@ public class SubStateMachineHandler implements StateHandler, InterceptibleStateH
                 LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>> Start to execute SubStateMachine [{}] by state[{}]",
                     subStateMachine.getStateMachineName(), subStateMachine.getName());
             }
+            // todo 获取下个状态
             StateMachineInstance subStateMachineInstance = callSubStateMachine(startParams, engine, context,
                 stateInstance, subStateMachine);
 

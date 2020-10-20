@@ -218,7 +218,7 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
                 } else {
                     Class<?> serviceInterface = SpringProxyUtils.findTargetClass(bean);
                     Class<?>[] interfacesIfJdk = SpringProxyUtils.findInterfaces(bean);
-
+                    // 扫描 GlobalTransactional
                     if (!existsAnnotation(new Class[]{serviceInterface})
                         && !existsAnnotation(interfacesIfJdk)) {
                         return bean;
@@ -233,6 +233,7 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
 
                 LOGGER.info("Bean[{}] with name [{}] would use interceptor [{}]", bean.getClass().getName(), beanName, interceptor.getClass().getName());
                 if (!AopUtils.isAopProxy(bean)) {
+                    // 调用父类 原生代理方法
                     bean = super.wrapIfNecessary(bean, beanName, cacheKey);
                 } else {
                     AdvisedSupport advised = SpringProxyUtils.getAdvisedSupport(bean);
@@ -282,6 +283,9 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
         return new Object[]{interceptor};
     }
 
+    /**
+     * 初始化 TM RM
+     */
     @Override
     public void afterPropertiesSet() {
         if (disableGlobalTransaction) {

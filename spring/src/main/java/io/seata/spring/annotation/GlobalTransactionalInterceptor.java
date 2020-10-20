@@ -105,8 +105,10 @@ public class GlobalTransactionalInterceptor implements ConfigurationChangeListen
                                            final GlobalTransactional globalTrxAnno) throws Throwable {
         try {
             return transactionalTemplate.execute(new TransactionalExecutor() {
+
                 @Override
                 public Object execute() throws Throwable {
+                    // 执行代理
                     return methodInvocation.proceed();
                 }
 
@@ -118,6 +120,9 @@ public class GlobalTransactionalInterceptor implements ConfigurationChangeListen
                     return formatMethod(methodInvocation.getMethod());
                 }
 
+                /**
+                 * 设置 事务信息 把注解的配置信息 copy 出去
+                 */
                 @Override
                 public TransactionInfo getTransactionInfo() {
                     TransactionInfo transactionInfo = new TransactionInfo();

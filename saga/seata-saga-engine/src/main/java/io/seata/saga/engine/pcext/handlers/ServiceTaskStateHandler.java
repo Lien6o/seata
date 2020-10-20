@@ -159,7 +159,7 @@ public class ServiceTaskStateHandler implements StateHandler, InterceptibleState
                     ((ApplicationContextAware) serviceInvoker).setApplicationContext(
                             stateMachineConfig.getApplicationContext());
                 }
-
+                // 调用saga 配置的方法
                 result = serviceInvoker.invoke(state, input.toArray());
             }
 
